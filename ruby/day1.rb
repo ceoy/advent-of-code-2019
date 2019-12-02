@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 
 fuel=0
-file=File.open("input/day1.txt").read
+file=File.open("../input/day1.txt").read
 file.each_line do |line|
   fuel += line.to_i / 3 - 2
 end

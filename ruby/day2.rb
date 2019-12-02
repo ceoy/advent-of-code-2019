@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 
-original=File.open("input/day2.txt").read.split(",").map(&:to_i)
+original=File.open("../input/day2.txt").read.split(",").map(&:to_i)
 a = original.dup
 a[1] = 12
 a[2] = 2
