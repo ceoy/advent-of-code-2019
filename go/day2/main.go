@@ -21,17 +21,17 @@ func part1(input string) int {
 	a[1] = 12
 	a[2] = 2
 
-	instruction_pointer := 0
-	for a[instruction_pointer] != 99 {
-		opcode := a[instruction_pointer]
+	instructionPointer := 0
+	for a[instructionPointer] != 99 {
+		opcode := a[instructionPointer]
 
 		if opcode == 1 {
-			a[a[instruction_pointer+3]] = a[a[instruction_pointer+1]] + a[a[instruction_pointer+2]]
+			a[a[instructionPointer+3]] = a[a[instructionPointer+1]] + a[a[instructionPointer+2]]
 		} else if opcode == 2 {
-			a[a[instruction_pointer+3]] = a[a[instruction_pointer+1]] * a[a[instruction_pointer+2]]
+			a[a[instructionPointer+3]] = a[a[instructionPointer+1]] * a[a[instructionPointer+2]]
 		}
 
-		instruction_pointer += 4
+		instructionPointer += 4
 	}
 	return a[0]
 }
@@ -41,27 +41,27 @@ func part2(input string) int {
 
 	for result != 19690720 {
 		a := inputToIntArray(input)
-		noun += 1
+		noun++
 		if noun >= len(a) {
 			noun = 0
-			verb += 1
+			verb++
 		}
 
 		a[1] = noun
 		a[2] = verb
 
-		instruction_pointer := 0
+		instructionPointer := 0
 
-		for a[instruction_pointer] != 99 {
-			opcode := a[instruction_pointer]
+		for a[instructionPointer] != 99 {
+			opcode := a[instructionPointer]
 
 			if opcode == 1 {
-				a[a[instruction_pointer+3]] = a[a[instruction_pointer+1]] + a[a[instruction_pointer+2]]
+				a[a[instructionPointer+3]] = a[a[instructionPointer+1]] + a[a[instructionPointer+2]]
 			} else if opcode == 2 {
-				a[a[instruction_pointer+3]] = a[a[instruction_pointer+1]] * a[a[instruction_pointer+2]]
+				a[a[instructionPointer+3]] = a[a[instructionPointer+1]] * a[a[instructionPointer+2]]
 			}
 
-			instruction_pointer += 4
+			instructionPointer += 4
 		}
 		result = a[0]
 	}
@@ -70,11 +70,11 @@ func part2(input string) int {
 
 func main() {
 	bytes, _ := ioutil.ReadFile("../../input/day2.txt")
-	read_line := strings.TrimSuffix(string(bytes), "\n")
+	readLine := strings.TrimSuffix(string(bytes), "\n")
 
-	resultPart1 := part1(read_line)
+	resultPart1 := part1(readLine)
 	fmt.Printf("part 1: %d\n", resultPart1)
 
-	resultPart2 := part2(read_line)
+	resultPart2 := part2(readLine)
 	fmt.Printf("part 2: %d\n", resultPart2)
 }
