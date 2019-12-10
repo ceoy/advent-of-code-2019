@@ -1,8 +1,12 @@
 #!/usr/bin/ruby
 
-Result = Struct.new(:ip, :opcode, :a)
+# the program requires 2 inputs
+# first will be 0
+Result = Struct.new(:ip, :opcode, :a, :isInput, :output)
 
 def do_instruction(ip, a, input)
+  isInput=false
+  output=nil
   # https://www.alexstrick.com/blog/using-rubys-digits-method
   instruction = padleft(a[ip].digits.reverse, 5)
   opcode = instruction.last(2).join.to_i
@@ -15,12 +19,14 @@ def do_instruction(ip, a, input)
     a[a[ip+3]]=val
     ip += 4
   when 3 # input
-    puts "require input - taking #{input}"
-    a[a[ip+1]]=input # currenty hardcoded :)
+    #  puts "require input - taking #{input}"
+    isInput=true
+    a[a[ip+1]]=input
     ip += 2
   when 4 # output
     value = getParamValue(a, ip, instruction, 1)
-    puts value
+    #puts value
+    output = value
     ip += 2
   when 5 # jmp if true
     if getParamValue(a, ip, instruction, 1) != 0
@@ -52,10 +58,11 @@ def do_instruction(ip, a, input)
     # program end
     puts "program finished"
   else
-    puts "opcode #{opcode} not implemented"
+    puts "opcode #{opcode} not implemented, cancelling"
+    opcode=99 # cancel program!
   end
 
-  Result.new(ip, opcode, a)
+  Result.new(ip, opcode, a, isInput, output)
 end
 
 def getParamValue(a, ip, instruction, param)
@@ -72,23 +79,55 @@ def padleft(a, n)
   Array.new([0, n-a.length].max, 0)+a
 end
 
-def part1(a)
-  result=do_instruction(0, a, 1)
-  while result.opcode != 99
-    result=do_instruction(result.ip, result.a, 1)
-  end
-end
+def runAmplifier(program, index, digitsToTest, input)
+  programToRun = program.dup # create a copy of the program
+  digit=digitsToTest[index]
 
-def part2(a, input)
-  result=do_instruction(0, a, input)
-  while result.opcode != 99
+  result=do_instruction(0, programToRun, digit)
+
+  while result.output == nil and result.opcode != 99
     result=do_instruction(result.ip, result.a, input)
   end
+  result.output
 end
 
-original=File.open("../input/day5.txt").read.split(",").map(&:to_i)
-# example=File.open("../input/day5.example.7.txt").read.split(",").map(&:to_i)
+def createArray()
+  a=Array.new(3125)
 
-part1(original.dup)
-part2(original.dup, 5)
-# part2(example.dup, 0)
+  # mmh sexy
+  index=0
+  (0..4).each { |one|
+    (0..4).each { |two|
+      (0..4).each { |three|
+        (0..4).each { |four|
+          (0..4).each { |five|
+            a[index]=[one, two, three, four, five]
+            index+=1
+          }
+        }
+      }
+    }
+  }
+  return a.select { |number| number.uniq.length == 5 }
+end
+
+def part1(amplifier_controller_software)
+  result=0
+  createArray().each { |number|
+    output=0
+    for i in 0..4 do
+      # run each amplifier
+      output = runAmplifier(amplifier_controller_software, i, number, output)
+    end
+    if output != nil and result < output
+      result = output
+    end
+  }
+  result
+end
+
+program=File.open("../input/day7.txt").read.split(",").map(&:to_i)
+#program=File.open("../input/day7.example.1.txt").read.split(",").map(&:to_i)
+#program=File.open("../input/day7.example.2.txt").read.split(",").map(&:to_i)
+
+puts "day 7 part 1: #{part1(program)}"
